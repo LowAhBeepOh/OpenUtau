@@ -124,7 +124,7 @@
                          Bounds="{Binding Bounds, Mode=OneWayToSource}"
                          TrackHeight="{Binding TrackHeight}"
                          TrackOffset="{Binding TrackOffset}" IsPianoRoll="True"/>
-      <c:TickBackground Grid.Row="2" Grid.RowSpan="2" Grid.Column="1" IsHitTestVisible="False"
+      <c:TickBackground Grid.Row="2" Grid.RowSpan="2" Grid.Column="1" IsHitTestVisible="False" IsPianoRoll="True"
                         Foreground="{DynamicResource TickLineBrush}"
                         Background="{DynamicResource TickLineBrushLow}"
                         Resolution="{Binding PlaybackViewModel.Resolution}"
@@ -136,11 +136,11 @@
                         ShowBar="True"/>
       <!-- Notes backgrounds end -->
       <!-- Expression backgrounds (to rendered below portrait) -->
-      <c:TrackBackground Grid.Row="5" Grid.Column="1" IsHitTestVisible="False"
+      <c:TrackBackground Grid.Row="5" Grid.Column="1" IsHitTestVisible="False" IsPianoRoll="True"
                          IsVisible="{Binding NotesViewModel.ShowExpressions}"
                          Foreground="{DynamicResource TrackBackgroundAltBrush}"
                          TrackHeight="{Binding NotesViewModel.ExpTrackHeight}"/>
-      <c:TickBackground Grid.Row="5" Grid.Column="1" IsHitTestVisible="False"
+      <c:TickBackground Grid.Row="5" Grid.Column="1" IsHitTestVisible="False" IsPianoRoll="True"
                         IsVisible="{Binding NotesViewModel.ShowExpressions}"
                         Foreground="{DynamicResource TickLineBrush}"
                         Background="{DynamicResource TickLineBrushLow}"
@@ -617,11 +617,11 @@
       <GridSplitter Grid.Row="4" Grid.ColumnSpan="3" Height="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                     Background="{DynamicResource SystemControlBackgroundAltHighBrush}" IsVisible="{Binding NotesViewModel.ShowExpressions}"
                     Focusable="False" Cursor="SizeNorthSouth"/>
-      <c:TrackBackground Grid.Row="5" Grid.Column="1" IsHitTestVisible="False"
+      <c:TrackBackground Grid.Row="5" Grid.Column="1" IsHitTestVisible="False" IsPianoRoll="True"
                          IsVisible="{Binding NotesViewModel.ShowExpressions}"
                          Foreground="{DynamicResource TrackBackgroundAltBrush}"
                          TrackHeight="{Binding NotesViewModel.ExpTrackHeight}"/>
-      <c:TickBackground Grid.Row="5" Grid.Column="1" IsHitTestVisible="False"
+      <c:TickBackground Grid.Row="5" Grid.Column="1" IsHitTestVisible="False" IsPianoRoll="True"
                         IsVisible="{Binding NotesViewModel.ShowExpressions}"
                         Foreground="{DynamicResource TickLineBrush}"
                         Background="{DynamicResource TickLineBrushLow}"

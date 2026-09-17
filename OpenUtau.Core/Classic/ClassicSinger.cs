@@ -30,6 +30,8 @@ namespace OpenUtau.Classic {
         public override int PortraitHeight => voicebank.PortraitHeight;
         public override string DefaultPhonemizer => voicebank.DefaultPhonemizer;
         public override string Sample => voicebank.Sample == null ? null : Path.Combine(Location, voicebank.Sample);
+        public override string VoicebankTheme => voicebank.VoicebankTheme;
+        public override VoicebankThemeColors VoicebankThemeColors => voicebank.ThemeColors;
         public override Encoding TextFileEncoding => voicebank.TextFileEncoding;
         public override IList<USubbank> Subbanks => subbanks;
         public override IList<UOto> Otos => otos;

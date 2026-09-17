@@ -35,7 +35,47 @@ namespace OpenUtau.Classic {
         public string[] ToneRanges { get; set; }
     }
 
-    public class VoicebankConfig {
+    /// <summary>
+/// Fully custom piano roll colors, used when <c>voicebank_theme</c> is "custom".
+/// Every field is an optional hex color ("#RRGGBB" or "#AARRGGBB");
+/// unspecified colors fall back to a palette derived from the portrait.
+/// </summary>
+public class VoicebankThemeColors {
+    public string GridBackground;
+    public string GridBackgroundAlt;
+    public string TickLine;
+    public string TickLineLow;
+    public string BarNumber;
+    public string WhiteKey;
+    public string WhiteKeyName;
+    public string BlackKey;
+    public string BlackKeyName;
+    public string CenterKey;
+    public string CenterKeyName;
+    public string Note;
+    public string NoteSelected;
+    public string NoteError;
+    public string Neutral;
+
+    public bool IsEmpty =>
+        string.IsNullOrWhiteSpace(GridBackground) &&
+        string.IsNullOrWhiteSpace(GridBackgroundAlt) &&
+        string.IsNullOrWhiteSpace(TickLine) &&
+        string.IsNullOrWhiteSpace(TickLineLow) &&
+        string.IsNullOrWhiteSpace(BarNumber) &&
+        string.IsNullOrWhiteSpace(WhiteKey) &&
+        string.IsNullOrWhiteSpace(WhiteKeyName) &&
+        string.IsNullOrWhiteSpace(BlackKey) &&
+        string.IsNullOrWhiteSpace(BlackKeyName) &&
+        string.IsNullOrWhiteSpace(CenterKey) &&
+        string.IsNullOrWhiteSpace(CenterKeyName) &&
+        string.IsNullOrWhiteSpace(Note) &&
+        string.IsNullOrWhiteSpace(NoteSelected) &&
+        string.IsNullOrWhiteSpace(NoteError) &&
+        string.IsNullOrWhiteSpace(Neutral);
+}
+
+public class VoicebankConfig {
         public string Name;
         public Dictionary<string, string> LocalizedNames;
         public string SingerType;
@@ -50,6 +90,15 @@ namespace OpenUtau.Classic {
         public string Version;
         public string Sample;
         public string DefaultPhonemizer;
+        /// <summary>
+        /// Optional piano roll theme derived from the portrait image.
+        /// One of "auto", "light", "dark", "colorful", "custom".
+        /// </summary>
+        public string VoicebankTheme;
+        /// <summary>
+        /// Custom colors, used when <see cref="VoicebankTheme"/> is "custom".
+        /// </summary>
+        public VoicebankThemeColors VoicebankThemeColors;
         public SymbolSet SymbolSet { get; set; }
         public Subbank[] Subbanks { get; set; }
         public bool? UseFilenameAsAlias = null;

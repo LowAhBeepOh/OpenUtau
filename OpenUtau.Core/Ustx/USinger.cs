@@ -233,6 +233,16 @@ namespace OpenUtau.Core.Ustx {
         public virtual float PortraitOpacity { get; }
         public virtual int PortraitHeight { get; }
         public virtual string Sample { get; }
+        /// <summary>
+        /// Optional piano roll theme from character.yaml ("auto", "light", "dark", "colorful").
+        /// Null when the voicebank does not define one.
+        /// </summary>
+        public virtual string VoicebankTheme { get; }
+        /// <summary>
+        /// Fully custom piano roll colors, used when the theme is "custom".
+        /// Null when the voicebank does not define any.
+        /// </summary>
+        public virtual VoicebankThemeColors VoicebankThemeColors { get; }
         public virtual string DefaultPhonemizer { get; }
         public virtual Encoding TextFileEncoding => Encoding.UTF8;
         public virtual IList<USubbank> Subbanks { get; }

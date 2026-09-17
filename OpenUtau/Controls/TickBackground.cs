@@ -47,6 +47,11 @@ namespace OpenUtau.App.Controls {
                 nameof(ShowBar),
                 o => o.ShowBar,
                 (o, v) => o.ShowBar = v);
+        public static readonly DirectProperty<TickBackground, bool> IsPianoRollProperty =
+            AvaloniaProperty.RegisterDirect<TickBackground, bool>(
+                nameof(IsPianoRoll),
+                o => o.IsPianoRoll,
+                (o, v) => o.IsPianoRoll = v);
 
         public int Resolution {
             get => _resolution;
@@ -77,6 +82,10 @@ namespace OpenUtau.App.Controls {
             get => _showBar;
             set => SetAndRaise(ShowBarProperty, ref _showBar, value);
         }
+        public bool IsPianoRoll {
+            get => _isPianoRoll;
+            set => SetAndRaise(IsPianoRollProperty, ref _isPianoRoll, value);
+        }
 
         private int _resolution = 480;
         private double _tickWidth;
@@ -85,6 +94,7 @@ namespace OpenUtau.App.Controls {
         private int _snapDiv;
         private ObservableCollection<int>? _snapTicks;
         private bool _showBar = true;
+        private bool _isPianoRoll;
 
         private Pen penBar;
         private Pen penBeatUnit;
@@ -118,7 +128,8 @@ namespace OpenUtau.App.Controls {
                 change.Property == TickWidthProperty ||
                 change.Property == TickOffsetProperty ||
                 change.Property == SnapDivProperty ||
-                change.Property == ShowBarProperty) {
+                change.Property == ShowBarProperty ||
+                change.Property == IsPianoRollProperty) {
                 InvalidateVisual();
             }
         }
@@ -127,6 +138,12 @@ namespace OpenUtau.App.Controls {
             if (TickWidth <= 0) {
                 return;
             }
+            // Voicebank theme only applies inside the piano roll.
+            var palette = IsPianoRoll ? VoicebankTheme.Current : null;
+            var barNumberBrush = palette?.BarNumberBrush ?? ThemeManager.BarNumberBrush;
+            var penBarCurrent = palette?.TickLinePen ?? penBar;
+            var penBeatUnitCurrent = palette?.TickLineLowPen ?? penBeatUnit;
+            var penDashedCurrent = palette?.TickLineLowDashPen ?? penDanshed;
             var project = Core.DocManager.Inst.Project;
             int snapUnit = project.resolution * 4 / SnapDiv;
             while (snapUnit * TickWidth < ViewConstants.MinTicklineWidth) {
@@ -148,12 +165,12 @@ namespace OpenUtau.App.Controls {
                 double x = Math.Round(barTick * TickWidth - pixelOffset) + 0.5;
                 double y = -0.5;
                 if (ShowBar) {
-                    var textLayout = TextLayoutCache.Get((bar + 1).ToString(), ThemeManager.BarNumberBrush, 10);
+                    var textLayout = TextLayoutCache.Get((bar + 1).ToString(), barNumberBrush, 10);
                     using (var state = context.PushTransform(Matrix.CreateTranslation(x + 3, 10))) {
                         textLayout.Draw(context, new Point());
                     }
                 }
-                context.DrawLine(penBar, new Point(x, y), new Point(x, Bounds.Height + 0.5f));
+                context.DrawLine(penBarCurrent, new Point(x, y), new Point(x, Bounds.Height + 0.5f));
                 // Lines between bars.
                 var timeSig = project.timeAxis.TimeSignatureAtBar(bar);
                 int nextBarTick = project.timeAxis.BarBeatToTickPos(bar + 1, 0);
@@ -172,7 +189,7 @@ namespace OpenUtau.App.Controls {
                     for (int tick = barTick + ticksPerLine; tick < nextBarTick; tick += ticksPerLine) {
                         SnapTicks?.Add(tick);
                         project.timeAxis.TickPosToBarBeat(tick, out int snapBar, out int snapBeat, out int snapRemainingTicks);
-                        var pen = snapRemainingTicks != 0 ? penDanshed : penBeatUnit;
+                        var pen = snapRemainingTicks != 0 ? penDashedCurrent : penBeatUnitCurrent;
                         x = Math.Round(tick * TickWidth - pixelOffset) + 0.5;
                         y = ShowBar ? 24 : 0;
                         context.DrawLine(pen, new Point(x, y), new Point(x, Bounds.Height + 0.5f));
@@ -186,8 +203,8 @@ namespace OpenUtau.App.Controls {
             if (ShowBar) {
                 foreach (var tempo in project.tempos) {
                     double x = Math.Round(tempo.position * TickWidth - pixelOffset) + 0.5;
-                    context.DrawLine(penDanshed, new Point(x, 0), new Point(x, 24));
-                    var textLayout = TextLayoutCache.Get(tempo.bpm.ToString("#0.00"), ThemeManager.BarNumberBrush, 10);
+                    context.DrawLine(penDashedCurrent, new Point(x, 0), new Point(x, 24));
+                    var textLayout = TextLayoutCache.Get(tempo.bpm.ToString("#0.00"), barNumberBrush, 10);
                     using (var state = context.PushTransform(Matrix.CreateTranslation(x + 3, 0))) {
                         textLayout.Draw(context, new Point());
                     }
@@ -195,9 +212,9 @@ namespace OpenUtau.App.Controls {
 
                 foreach (var timeSig in project.timeSignatures) {
                     int tick = project.timeAxis.BarBeatToTickPos(timeSig.barPosition, 0);
-                    var barTextLayout = TextLayoutCache.Get((timeSig.barPosition + 1).ToString(), ThemeManager.BarNumberBrush, 10);
+                    var barTextLayout = TextLayoutCache.Get((timeSig.barPosition + 1).ToString(), barNumberBrush, 10);
                     double x = Math.Round(tick * TickWidth - pixelOffset) + 0.5 + barTextLayout.Width + 4;
-                    var textLayout = TextLayoutCache.Get($"{timeSig.beatPerBar}/{timeSig.beatUnit}", ThemeManager.BarNumberBrush, 10);
+                    var textLayout = TextLayoutCache.Get($"{timeSig.beatPerBar}/{timeSig.beatUnit}", barNumberBrush, 10);
                     using (var state = context.PushTransform(Matrix.CreateTranslation(x + 3, 10))) {
                         textLayout.Draw(context, new Point());
                     }

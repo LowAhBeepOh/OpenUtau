@@ -185,6 +185,8 @@ namespace OpenUtau.App.Controls {
 
             MessageBus.Current.Listen<NotesRefreshEvent>()
                 .Subscribe(_ => InvalidateVisual());
+            MessageBus.Current.Listen<ThemeChangedEvent>()
+                .Subscribe(_ => InvalidateVisual());
             MessageBus.Current.Listen<NotesSelectionEvent>()
                 .Subscribe(e => {
                     selectedNotes.Clear();
@@ -559,14 +561,14 @@ namespace OpenUtau.App.Controls {
             }
             // apply the transparent/greyed-out brush if an error was found
             var brush = selectedNotes.Contains(note)
-                ? (hasError ? ThemeManager.AccentBrush3Semi : ThemeManager.AccentBrush2)
-                : (hasError ? ThemeManager.NeutralAccentBrushSemi : ThemeManager.AccentBrush1);
+                ? (hasError ? VoicebankTheme.PianoRollNote3Semi : VoicebankTheme.PianoRollNote2)
+                : (hasError ? VoicebankTheme.PianoRollNeutralSemi : VoicebankTheme.PianoRollNote1);
             if (!selectedNotes.Contains(note)) {
                 float highlight = ShowPlaybackNoteHighlight
                     ? (note == activePlaybackNote ? activeHighlight : note == fadingPlaybackNote ? fadingHighlight : 0)
                     : 0;
                 if (highlight > 0.001f) {
-                    brush = BlendBrush(brush, hasError ? ThemeManager.AccentBrush3Semi : ThemeManager.AccentBrush2, highlight);
+                    brush = BlendBrush(brush, hasError ? VoicebankTheme.PianoRollNote3Semi : VoicebankTheme.PianoRollNote2, highlight);
                 }
             }
             context.DrawRectangle(brush, null, new Rect(leftTop, rightBottom), 2, 2);
@@ -593,8 +595,8 @@ namespace OpenUtau.App.Controls {
                 if (isTransition) {
                     // Badge Background utilizes the same hasError flag
                     var badgeBrush = selectedNotes.Contains(note)
-                        ? (hasError ? ThemeManager.AccentBrush3Semi : ThemeManager.AccentBrush2)
-                        : (hasError ? ThemeManager.NeutralAccentBrushSemi : ThemeManager.AccentBrush1);
+                        ? (hasError ? VoicebankTheme.PianoRollNote3Semi : VoicebankTheme.PianoRollNote2)
+                        : (hasError ? VoicebankTheme.PianoRollNeutralSemi : VoicebankTheme.PianoRollNote1);
 
                     if (isCurrentDefault) {
                         double boxWidth = 16; 
@@ -698,8 +700,8 @@ namespace OpenUtau.App.Controls {
             var points = new Points();          
             points.Add(p0);
 
-            var brush = note.pitch.snapFirst ? ThemeManager.AccentBrush3 : null;
-            var pen = ThemeManager.AccentPen3;
+            var brush = note.pitch.snapFirst ? VoicebankTheme.PianoRollNote3 : null;
+            var pen = VoicebankTheme.PianoRollNote3Pen;
             using (var state = context.PushTransform(Matrix.CreateTranslation(p0.X, p0.Y))) {
                 context.DrawGeometry(brush, pen, pointGeometry);
             }
@@ -763,7 +765,7 @@ namespace OpenUtau.App.Controls {
                 return;
             }
 
-            var pen = ThemeManager.AccentPen3;
+            var pen = VoicebankTheme.PianoRollNote3Pen;
             float nPeriod = (float)viewModel.Project.timeAxis.TicksBetweenMsPos(note.PositionMs, note.PositionMs + vibrato.period) / note.duration;
             float nPos = vibrato.NormalizedStart;
             var point = vibrato.Evaluate(nPos, nPeriod, note);
@@ -783,7 +785,7 @@ namespace OpenUtau.App.Controls {
             var vibrato = note.vibrato;
             var togglePos = vibrato.GetToggle(note);
             Point icon = viewModel.TickToneToPoint(togglePos.X, togglePos.Y);
-            var pen = ThemeManager.BarNumberPen;
+            var pen = VoicebankTheme.PianoRollBarNumberPen;
             using (var state = context.PushTransform(Matrix.CreateTranslation(icon.X - 10, icon.Y))) {
                 context.DrawGeometry(vibrato.length == 0 ? null : pen.Brush, pen, vibratoIcon);
             }
@@ -794,7 +796,7 @@ namespace OpenUtau.App.Controls {
             if (vibrato.length == 0) {
                 return;
             }
-            var pen = ThemeManager.BarNumberPen!;
+            var pen = VoicebankTheme.PianoRollBarNumberPen;
             Point start = viewModel.TickToneToPoint(vibrato.GetEnvelopeStart(note));
             Point fadeIn = viewModel.TickToneToPoint(vibrato.GetEnvelopeFadeIn(note));
             Point fadeOut = viewModel.TickToneToPoint(vibrato.GetEnvelopeFadeOut(note));
@@ -823,7 +825,7 @@ namespace OpenUtau.App.Controls {
         }
 
         private void RenderFinalPitch(double leftTick, double rightTick, NotesViewModel viewModel, DrawingContext context) {
-            var pen = ThemeManager.FinalPitchPen!;
+            var pen = VoicebankTheme.PianoRollFinalPitchPen;
             lock (Part!) {
                 foreach (var phrase in Part!.renderPhrases) {
                     if (phrase.position - Part.position > rightTick || phrase.end - Part.position < leftTick) {

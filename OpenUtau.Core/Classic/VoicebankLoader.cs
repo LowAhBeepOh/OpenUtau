@@ -200,6 +200,12 @@ namespace OpenUtau.Classic {
             if (!string.IsNullOrWhiteSpace(bankConfig.DefaultPhonemizer)) {
                 bank.DefaultPhonemizer = bankConfig.DefaultPhonemizer;
             }
+            if (!string.IsNullOrWhiteSpace(bankConfig.VoicebankTheme)) {
+                bank.VoicebankTheme = bankConfig.VoicebankTheme;
+            }
+            if (bankConfig.VoicebankThemeColors != null) {
+                bank.ThemeColors = bankConfig.VoicebankThemeColors;
+            }
             if (bankConfig.Subbanks != null && bankConfig.Subbanks.Length > 0) {
                 foreach (var subbank in bankConfig.Subbanks) {
                     subbank.Color ??= string.Empty;

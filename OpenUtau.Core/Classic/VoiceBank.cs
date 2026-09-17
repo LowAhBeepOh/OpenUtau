@@ -18,6 +18,8 @@ namespace OpenUtau.Classic {
         public string Version;
         public string Sample;
         public string OtherInfo;
+        public string VoicebankTheme;
+        public VoicebankThemeColors ThemeColors;
         public string DefaultPhonemizer;
         public Encoding TextFileEncoding;
         public USingerType SingerType = USingerType.Classic;
@@ -39,6 +41,8 @@ namespace OpenUtau.Classic {
             Version = null;
             Sample = null;
             OtherInfo = null;
+            VoicebankTheme = null;
+            ThemeColors = null;
             TextFileEncoding = null;
             SingerType = USingerType.Classic;
             OtoSets.Clear();

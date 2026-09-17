@@ -1,0 +1,11 @@
+hey gangs
+this is custom version
+where i add stuff
+since ok
+ay
+nsx = non-standard version
+i dont know why i called it that sorry
+meow
+
+everything added:
+- Theme in Piano Roll based on voicebank portrait with character.yaml.

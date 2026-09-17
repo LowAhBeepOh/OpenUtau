@@ -101,20 +101,26 @@ namespace OpenUtau.App.Controls {
                     degreeNames = Enumerable.Repeat("", 12).ToArray();
                     break;
             }
+            // Voicebank theme only applies inside the piano roll.
+            var palette = (IsPianoRoll || IsKeyboard) ? VoicebankTheme.Current : null;
             while (top < Bounds.Height) {
                 bool isAltTrack = IsAltTrack(track) ^ (ThemeManager.IsDarkMode && !IsKeyboard);
                 bool isCenterKey = IsKeyboard && IsCenterKey(track);
-                var brush = isCenterKey ? ThemeManager.CenterKeyBrush
-                    : IsKeyboard ? (isAltTrack ? ThemeManager.BlackKeyBrush : ThemeManager.WhiteKeyBrush)
-                    : isAltTrack ? Foreground : Background;
+                var brush = isCenterKey ? (palette?.CenterKeyBrush ?? ThemeManager.CenterKeyBrush)
+                    : IsKeyboard ? (isAltTrack
+                        ? (palette?.BlackKeyBrush ?? ThemeManager.BlackKeyBrush)
+                        : (palette?.WhiteKeyBrush ?? ThemeManager.WhiteKeyBrush))
+                    : isAltTrack
+                        ? (palette?.GridBackgroundAltBrush ?? Foreground)
+                        : (palette?.GridBackgroundBrush ?? Background);
                 context.DrawRectangle(
                     brush,
                     null,
                     new Rect(0, (int)top, Bounds.Width, TrackHeight));
                 if (IsKeyboard && TrackHeight >= 12) {
-                    brush = isCenterKey ? ThemeManager.CenterKeyNameBrush
-                        : isAltTrack ? ThemeManager.BlackKeyNameBrush
-                            : ThemeManager.WhiteKeyNameBrush;
+                    brush = isCenterKey ? (palette?.CenterKeyNameBrush ?? ThemeManager.CenterKeyNameBrush)
+                        : isAltTrack ? (palette?.BlackKeyNameBrush ?? ThemeManager.BlackKeyNameBrush)
+                            : (palette?.WhiteKeyNameBrush ?? ThemeManager.WhiteKeyNameBrush);
                     int tone = ViewConstants.MaxTone - 1 - track;
                     string toneName = MusicMath.GetToneName(tone);
                     var toneTextLayout = TextLayoutCache.Get(toneName, brush, 12);

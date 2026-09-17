@@ -358,6 +358,8 @@ namespace OpenUtau.App.ViewModels {
                 .Subscribe(e => {
                     DocManager.Inst.NotesClipboard?.Clear();
                 });
+            MessageBus.Current.Listen<ThemeChangedEvent>()
+                .Subscribe(_ => LoadVoicebankTheme(Part, Project));
         }
 
         private void UpdateSnapDiv() {
@@ -507,6 +509,7 @@ namespace OpenUtau.App.ViewModels {
             LoadPortrait(part, project);
             LoadWindowTitle(part, project);
             LoadTrackColor(part, project);
+            LoadVoicebankTheme(part, project);
             UpdateKey();
         }
 
@@ -614,12 +617,25 @@ namespace OpenUtau.App.ViewModels {
             ThemeManager.ChangePianorollColor(name);
         }
 
+        /// <summary>
+        /// Applies (or clears) the voicebank theme of the track currently opened in the piano roll.
+        /// The theme only paints the piano roll, so it is derived from the track's singer here.
+        /// </summary>
+        private void LoadVoicebankTheme(UPart? part, UProject? project) {
+            if (part == null || project == null || part.trackNo < 0 || part.trackNo >= project.tracks.Count) {
+                VoicebankTheme.Clear();
+                return;
+            }
+            VoicebankTheme.Apply(project.tracks[part.trackNo].Singer);
+        }
+
         private void UnloadPart() {
             DeselectNotes();
             Part = null;
             playbackNotes = Array.Empty<UNote>();
             LoadPortrait(null, null);
             LoadWindowTitle(null, null);
+            VoicebankTheme.Clear();
         }
 
         private void OnPartModified() {
@@ -1193,6 +1209,7 @@ namespace OpenUtau.App.ViewModels {
                 } else if (cmd is ValidateProjectNotification || cmd is SingersRefreshedNotification) {
                     if (Part != null) {
                         LoadPortrait(Part, Project);
+                        LoadVoicebankTheme(Part, Project);
                     }
                     OnPartModified();
                     RebuildPlaybackNoteIndex();
@@ -1262,6 +1279,7 @@ namespace OpenUtau.App.ViewModels {
                 if (cmd is TrackChangeSingerCommand trackChangeSinger) {
                     if (Part != null && trackChangeSinger.track.TrackNo == Part.trackNo) {
                         LoadPortrait(Part, Project);
+                        LoadVoicebankTheme(Part, Project);
                     }
                 }
                 UpdateIsDiffSinger();
